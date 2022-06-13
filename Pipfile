@@ -11,6 +11,7 @@ django-filter = "*"
 python-decouple = "*"
 psycopg2 = "*"
 pygments = "*"
+pillow = "*"
 
 [dev-packages]
 
