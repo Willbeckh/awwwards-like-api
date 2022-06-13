@@ -2,9 +2,10 @@ from email.headerregistry import Group
 from django.shortcuts import render
 from django.contrib.auth.models import User, Group
 from rest_framework import viewsets, permissions
-from api.serializers import UserSerializer, GroupSerializer, ProjectSerializer
+from django.http import HttpResponse
 
 # local imports
+from api.serializers import UserSerializer, GroupSerializer, ProjectSerializer
 from api.models import Project
 
 # Create your views here.
@@ -30,7 +31,9 @@ class ProjectViewSet(viewsets.ModelViewSet):
     """
     API endpoint for viewing and editing user projects
     """
-    queryset = Project.objects.all().order_by('-created_at')
-    serializer_class = ProjectSerializer
-    permission_classes = [permissions.IsAuthenticated]
-    
+    try:
+        queryset = Project.objects.all().order_by('-created_at')
+        serializer_class = ProjectSerializer
+        permission_classes = [permissions.IsAuthenticated]
+    except Project.DoesNotExist:
+        HttpResponse(status=404)
