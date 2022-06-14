@@ -50,7 +50,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
     try:
         queryset = Project.objects.all().order_by('-created_at')
         serializer_class = ProjectSerializer
-        search_fields = ['description   ']
+        search_fields = ['description', ]
         filter_backends = (filters.SearchFilter,)
         permission_classes = [permissions.IsAuthenticated]
     except Project.DoesNotExist:
