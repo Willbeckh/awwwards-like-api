@@ -1,7 +1,7 @@
 from email.headerregistry import Group
 from django.shortcuts import render
 from django.contrib.auth.models import User, Group
-from rest_framework import viewsets, permissions
+from rest_framework import viewsets, permissions, filters
 from django.http import HttpResponse
 
 # local imports
@@ -9,6 +9,8 @@ from api.serializers import UserSerializer, GroupSerializer, ProjectSerializer
 from api.models import Project
 
 # Create your views here.
+
+
 class UserViewSet(viewsets.ModelViewSet):
     """
     endpoint that allows user to view or edit user data.
@@ -16,7 +18,7 @@ class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all().order_by('-date_joined')
     serializer_class = UserSerializer
     permission_classes = [permissions.IsAuthenticated]
-    
+
 
 class GroupViewSet(viewsets.ModelViewSet):
     """
@@ -25,8 +27,8 @@ class GroupViewSet(viewsets.ModelViewSet):
     queryset = Group.objects.all()
     serializer_class = GroupSerializer
     permission_classes = [permissions.IsAuthenticated]
-        
-        
+
+
 class ProjectViewSet(viewsets.ModelViewSet):
     """
     API endpoint for viewing and editing user projects
@@ -34,6 +36,8 @@ class ProjectViewSet(viewsets.ModelViewSet):
     try:
         queryset = Project.objects.all().order_by('-created_at')
         serializer_class = ProjectSerializer
+        search_fields = ['description   ']
+        filter_backends = (filters.SearchFilter,)
         permission_classes = [permissions.IsAuthenticated]
     except Project.DoesNotExist:
         HttpResponse(status=404)
