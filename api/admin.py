@@ -23,6 +23,7 @@ class ProfileAdmin(admin.ModelAdmin):
         (None, {'fields': ['user']}),
         ('bio', {'fields': ['bio']}),
         ('Picture', {'fields': ['profile_pic']}),
+        ('Projects', {'fields': ['projects']}),
     ]
     
 admin.site.register(Profile, ProfileAdmin)
