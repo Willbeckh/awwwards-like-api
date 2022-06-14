@@ -39,6 +39,30 @@ class ProjectSerializer(serializers.ModelSerializer):
                   'description', 'url', 'created_at']
 
 
+class ProfileSerializer(serializers.HyperlinkedModelSerializer):
+
+    username = serializers.SerializerMethodField('get_username')
+    email = serializers.SerializerMethodField('get_email')
+    all_projects = serializers.SerializerMethodField('get_projects')
+    projects = serializers.SerializerMethodField('list_projects')
+
+    class Meta:
+        model = Profile
+        fields = ['id', 'user', 'username', 'email', 'url',
+                  'profile_pic', 'bio', 'all_projects', 'projects']
+
+    def get_username(self, obj):
+        return obj.user.username
+    
+    def get_email(self, obj):
+        return obj.user.email
+
+    def get_projects(self, obj):
+        return obj.projects.count_projects()
+
+    def list_projects(self, obj):
+        return ProjectSerializer(obj.projects.get_all_projects(), many=True).data
+
 
 # create registration serializer
 class RegisterSerializer(serializers.ModelSerializer):
