@@ -8,14 +8,13 @@ from rest_framework.response import Response
 from rest_framework_simplejwt.views import TokenObtainPairView
 
 # local imports
-from api.serializers import MyTokenObtainSerializer, UserSerializer, GroupSerializer, ProjectSerializer, RegisterSerializer
-from api.models import Project
+from api.serializers import MyTokenObtainSerializer, UserSerializer, GroupSerializer, ProjectSerializer, RegisterSerializer, ProfileSerializer
+from api.models import Project, Profile
 
 
 class MyObtainTokenPairView(TokenObtainPairView):
     permission_classes = (AllowAny, )
     serializer_class = MyTokenObtainSerializer
-
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -26,6 +25,14 @@ class UserViewSet(viewsets.ModelViewSet):
     serializer_class = UserSerializer
     permission_classes = [permissions.IsAuthenticated]
 
+
+class ProfileViewSet(viewsets.ModelViewSet):
+    """
+    endpoint that allows user to view or edit user data.
+    """
+    queryset = Profile.objects.all()
+    serializer_class = ProfileSerializer
+    permission_classes = [permissions.IsAuthenticated]
 
 # register view
 class RegisterView(generics.CreateAPIView):
@@ -55,3 +62,5 @@ class ProjectViewSet(viewsets.ModelViewSet):
         permission_classes = [permissions.IsAuthenticated]
     except Project.DoesNotExist:
         HttpResponse(status=404)
+
+
