@@ -1,14 +1,21 @@
 from email.headerregistry import Group
 from django.shortcuts import render
 from django.contrib.auth.models import User, Group
-from rest_framework import viewsets, permissions, filters
+from rest_framework import viewsets, permissions, filters, generics
 from django.http import HttpResponse
+from rest_framework.permissions import AllowAny
+from rest_framework.response import Response
+from rest_framework_simplejwt.views import TokenObtainPairView
 
 # local imports
-from api.serializers import UserSerializer, GroupSerializer, ProjectSerializer
+from api.serializers import MyTokenObtainSerializer, UserSerializer, GroupSerializer, ProjectSerializer, RegisterSerializer
 from api.models import Project
 
-# Create your views here.
+
+class MyObtainTokenPairView(TokenObtainPairView):
+    permission_classes = (AllowAny, )
+    serializer_class = MyTokenObtainSerializer
+
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -18,6 +25,13 @@ class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all().order_by('-date_joined')
     serializer_class = UserSerializer
     permission_classes = [permissions.IsAuthenticated]
+
+
+# register view
+class RegisterView(generics.CreateAPIView):
+    queryset = User.objects.all()
+    permission_classes = (AllowAny,)
+    serializer_class = RegisterSerializer
 
 
 class GroupViewSet(viewsets.ModelViewSet):
