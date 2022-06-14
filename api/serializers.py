@@ -38,9 +38,9 @@ class ProjectSerializer(serializers.ModelSerializer):
         fields = ['id', 'author', 'name', 'image_file',
                   'description', 'url', 'created_at']
 
+
+
 # create registration serializer
-
-
 class RegisterSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(
         required=True,
