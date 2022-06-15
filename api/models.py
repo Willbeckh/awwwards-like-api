@@ -2,24 +2,22 @@ from django.db import models
 from django.contrib.auth.models import User
 
 
-# todo: create user profile model
 class Profile(models.Model):
     user = models.OneToOneField(
-        User, on_delete=models.CASCADE, related_name='user')
+        User, on_delete=models.CASCADE, related_name='user_profile')
     profile_pic = models.ImageField(upload_to='profile/', blank=True)
     bio = models.TextField('user bio', blank=True)
-    projects = models.ForeignKey(
-        'Project', on_delete=models.CASCADE, related_name='projects', blank=True, null=True)
+    projects = models.ManyToManyField('Project', related_name='projects', blank=True)
 
     def __str__(self):
         return self.user.username
-    
+
     def save_profile(self):
         self.save()
-        
+
     def update_profile(self):
         self.update()
-        
+
     def delete_profile(self):
         self.delete()
 
@@ -35,17 +33,13 @@ class Project(models.Model):
 
     # model data display representation
     def __str__(self):
-        return self.name
-
-    # count the number of projects
-    @classmethod
-    def count_projects(cls):
-        return cls.objects.count()
+        return self.name   
 
     # return all user projects
     @classmethod
-    def get_all_projects(cls):
-        return cls.objects.all()
+    def get_all_projects(cls, user_id):
+        return cls.objects.filter(pk=user_id)
+    
 
 
 # rating model
