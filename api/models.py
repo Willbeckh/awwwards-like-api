@@ -7,7 +7,8 @@ class Profile(models.Model):
         User, on_delete=models.CASCADE, related_name='user_profile')
     profile_pic = models.ImageField(upload_to='profile/', blank=True)
     bio = models.TextField('user bio', blank=True)
-    projects = models.ManyToManyField('Project', related_name='projects', blank=True)
+    projects = models.ManyToManyField(
+        'Project', related_name='projects', blank=True)
 
     def __str__(self):
         return self.user.username
@@ -27,26 +28,41 @@ class Project(models.Model):
     name = models.CharField(max_length=200, default='project')
     image_file = models.ImageField(upload_to='images/', blank=True)
     description = models.TextField('project description')
-    url = models.CharField(max_length=200, null=True, blank=True)
+    url = models.URLField(max_length=200, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     author = models.ForeignKey(User, on_delete=models.CASCADE)
 
     # model data display representation
     def __str__(self):
-        return self.name   
+        return self.name
 
     # return all user projects
     @classmethod
     def get_all_projects(cls, user_id):
         return cls.objects.filter(pk=user_id)
-    
+
+
+RATE_CHOICES = [
+    (1, '1 - Poor'),
+    (2, '2 - Try Again'),
+    (3, '3 - Do Better'),
+    (4, '4 - Not bad'),
+    (5, '5 - OK'),
+    (6, '6 - Mmmh'),
+    (7, '7 - Good'),
+    (8, '8 - Very Good'),
+    (9, '9 - Classical'),
+    (10, '10 - Master Piece'),
+]
 
 
 # rating model
-# class Rating(models.Model):
-#     # add foreign key to user
-#     user = models.ForeignKey(User, on_delete=models.CASCADE)
-#     # add foreign key to project
-#     project = models.ForeignKey(Project, on_delete=models.CASCADE)
-
-    # create rating field for design, usability, and content
+class Rating(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    project = models.ForeignKey(Project, on_delete=models.CASCADE)
+    timestamp = models.DateTimeField(auto_now_add=True)
+    review = models.TextField(max_length=3000, blank=True)
+    stars = models.PositiveSmallIntegerField(choices=RATE_CHOICES)
+    # for design
+    # for perfomance
+    # for 
