@@ -36,6 +36,22 @@ class Project(models.Model):
     def __str__(self):
         return self.name
 
+    # get number of ratings
+    def all_ratings(self):
+        ratings = Rating.objects.filter(project=self).count()
+        return ratings
+
+    # average ratings
+    def avg_ratings(self):
+        sum = 0
+        ratings = Rating.objects.filter(project=self)
+        for rating in ratings:
+            sum += rating.stars
+
+        if ratings.count() > 0: # prevents division by zero
+            return sum/len(ratings)
+        return 0
+
     # return all user projects
     @classmethod
     def get_all_projects(cls, user_id):
@@ -62,7 +78,6 @@ class Rating(models.Model):
     project = models.ForeignKey(Project, on_delete=models.CASCADE)
     timestamp = models.DateTimeField(auto_now_add=True)
     review = models.TextField(max_length=3000, blank=True)
-    stars = models.PositiveSmallIntegerField(choices=RATE_CHOICES)
+    stars = models.PositiveSmallIntegerField(choices=RATE_CHOICES, default=0)
     # for design
     # for perfomance
-    # for 
