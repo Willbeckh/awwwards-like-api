@@ -7,7 +7,7 @@ from django.contrib.auth.password_validation import validate_password
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
 # local imports
-from api.models import Project, Profile
+from api.models import Project, Profile, Rating
 
 
 # token serializer
@@ -69,13 +69,6 @@ class ProjectSerializer(serializers.ModelSerializer):
         fields = ['id', 'author', 'name', 'image_file',
                   'description', 'url', 'created_at']
 
-    def get_all_projects(self, obj, ):
-        projects = obj.projects.filter(id=obj.user.id)
-        print(projects)
-        serializer = ProjectSerializer(projects, many=True)
-        return {"all_projects": serializer.data}
-
-
 # create registration serializer
 class RegisterSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(
@@ -115,3 +108,8 @@ class RegisterSerializer(serializers.ModelSerializer):
         user.save()
 
         return user
+
+class RatingSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Rating
+        fields = ['id', 'user', 'project', 'stars']
