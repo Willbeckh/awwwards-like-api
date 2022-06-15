@@ -1,3 +1,4 @@
+from urllib import request
 from rest_framework.response import Response
 from rest_framework import serializers, generics
 from django.contrib.auth.models import User, Group
@@ -19,11 +20,40 @@ class MyTokenObtainSerializer(TokenObtainPairSerializer):
         token['username'] = user.username
         return token
 
+class ProfileSerializer(serializers.ModelSerializer):
+    """jsonify user profile data"""
+    class Meta:
+        model = Profile
+        fields = ['profile_pic', 'bio']
+    
 
 class UserSerializer(serializers.ModelSerializer):
+    all_projects = serializers.SerializerMethodField()
+    projects = serializers.SerializerMethodField()
+    bio = serializers.SerializerMethodField('get_bio')
+
     class Meta:
         model = User
-        fields = ['id', 'url', 'username', 'email']
+        fields = ['id', 'username', 'email', 'bio',
+                  'url', 'projects', 'all_projects']
+
+    def get_projects(self, obj):
+        projects = Project.objects.filter(author=obj.id).count()
+        return projects
+
+    def get_all_projects(self, obj, ):
+        """Gets all user projects"""
+
+        projects = Project.objects.filter(author=obj.id)
+        print(projects)
+        serializer = ProjectSerializer(projects, many=True)
+        return {"all_projects": serializer.data}
+
+    def get_bio(self, obj):
+        """get the user bio from profile model"""
+        bio = Profile.objects.filter(user=obj.id)
+        serializer = ProfileSerializer(bio)
+        return serializer.data
 
 
 class GroupSerializer(serializers.HyperlinkedModelSerializer):
@@ -39,40 +69,11 @@ class ProjectSerializer(serializers.ModelSerializer):
         fields = ['id', 'author', 'name', 'image_file',
                   'description', 'url', 'created_at']
 
-
-class ProfileSerializer(serializers.HyperlinkedModelSerializer):
-
-    username = serializers.SerializerMethodField('get_username')
-    email = serializers.SerializerMethodField('get_email')
-    projects = serializers.SerializerMethodField()
-    all_projects = serializers.SerializerMethodField()
-
-    class Meta:
-        model = Profile
-        fields = ['id', 'user_id', 'username', 'email', 'url',
-                  'profile_pic', 'bio', 'projects', 'all_projects']
-        read_only_fields = ['author']
-
-    def get_username(self, obj):
-        return obj.user.username
-
-    def get_email(self, obj):
-        return obj.user.email
-
-    def get_projects(self, obj):
-        projects = obj.projects.all().count()
-        return projects
-
-    def get_all_projects(self, obj):
-        projects = obj.projects.all()
+    def get_all_projects(self, obj, ):
+        projects = obj.projects.filter(id=obj.user.id)
+        print(projects)
         serializer = ProjectSerializer(projects, many=True)
         return {"all_projects": serializer.data}
-    
-    # create a project
-    def create(self, request, **kwargs):
-        serializer = ProjectSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save(author=request.user)
 
 
 # create registration serializer
