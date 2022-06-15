@@ -1,4 +1,3 @@
-from email.headerregistry import Group
 from django.shortcuts import render
 from django.contrib.auth.models import User, Group
 from rest_framework import viewsets, permissions, filters, generics
@@ -8,7 +7,7 @@ from rest_framework.response import Response
 from rest_framework_simplejwt.views import TokenObtainPairView
 
 # local imports
-from api.serializers import MyTokenObtainSerializer, UserSerializer, GroupSerializer, ProjectSerializer, RegisterSerializer, ProfileSerializer
+from api.serializers import MyTokenObtainSerializer, UserSerializer, GroupSerializer, ProjectSerializer, RegisterSerializer
 from api.models import Project, Profile
 
 
@@ -25,14 +24,6 @@ class UserViewSet(viewsets.ModelViewSet):
     serializer_class = UserSerializer
     permission_classes = [permissions.IsAuthenticated]
 
-
-class ProfileViewSet(viewsets.ModelViewSet):
-    """
-    endpoint that allows user to view or edit user data.
-    """
-    queryset = Profile.objects.all()
-    serializer_class = ProfileSerializer
-    permission_classes = [permissions.IsAuthenticated]
 
 # register view
 class RegisterView(generics.CreateAPIView):
@@ -57,10 +48,8 @@ class ProjectViewSet(viewsets.ModelViewSet):
     try:
         queryset = Project.objects.all().order_by('-created_at')
         serializer_class = ProjectSerializer
-        search_fields = ['description', ]
+        search_fields = ['description', 'name']
         filter_backends = (filters.SearchFilter,)
         permission_classes = [permissions.IsAuthenticated]
     except Project.DoesNotExist:
         HttpResponse(status=404)
-
-
