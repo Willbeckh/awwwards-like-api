@@ -1,5 +1,6 @@
+from rest_framework.response import Response
+from rest_framework import serializers, generics
 from django.contrib.auth.models import User, Group
-from rest_framework import serializers
 from rest_framework.validators import UniqueValidator
 from django.contrib.auth.password_validation import validate_password
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
@@ -19,10 +20,10 @@ class MyTokenObtainSerializer(TokenObtainPairSerializer):
         return token
 
 
-class UserSerializer(serializers.HyperlinkedModelSerializer):
+class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['id', 'url', 'username', 'email', 'groups']
+        fields = ['id', 'url', 'username', 'email']
 
 
 class GroupSerializer(serializers.HyperlinkedModelSerializer):
@@ -43,25 +44,35 @@ class ProfileSerializer(serializers.HyperlinkedModelSerializer):
 
     username = serializers.SerializerMethodField('get_username')
     email = serializers.SerializerMethodField('get_email')
-    all_projects = serializers.SerializerMethodField('get_projects')
-    projects = serializers.SerializerMethodField('list_projects')
+    projects = serializers.SerializerMethodField()
+    all_projects = serializers.SerializerMethodField()
 
     class Meta:
         model = Profile
-        fields = ['id', 'user', 'username', 'email', 'url',
-                  'profile_pic', 'bio', 'all_projects', 'projects']
+        fields = ['id', 'user_id', 'username', 'email', 'url',
+                  'profile_pic', 'bio', 'projects', 'all_projects']
+        read_only_fields = ['author']
 
     def get_username(self, obj):
         return obj.user.username
-    
+
     def get_email(self, obj):
         return obj.user.email
 
     def get_projects(self, obj):
-        return obj.projects.count_projects()
+        projects = obj.projects.all().count()
+        return projects
 
-    def list_projects(self, obj):
-        return ProjectSerializer(obj.projects.get_all_projects(), many=True).data
+    def get_all_projects(self, obj):
+        projects = obj.projects.all()
+        serializer = ProjectSerializer(projects, many=True)
+        return {"all_projects": serializer.data}
+    
+    # create a project
+    def create(self, request, **kwargs):
+        serializer = ProjectSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save(author=request.user)
 
 
 # create registration serializer
