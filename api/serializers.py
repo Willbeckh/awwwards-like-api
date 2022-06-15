@@ -1,4 +1,3 @@
-from urllib import request
 from rest_framework.response import Response
 from rest_framework import serializers, generics
 from django.contrib.auth.models import User, Group
@@ -20,12 +19,13 @@ class MyTokenObtainSerializer(TokenObtainPairSerializer):
         token['username'] = user.username
         return token
 
+
 class ProfileSerializer(serializers.ModelSerializer):
     """jsonify user profile data"""
     class Meta:
         model = Profile
         fields = ['profile_pic', 'bio']
-    
+
 
 class UserSerializer(serializers.ModelSerializer):
     all_projects = serializers.SerializerMethodField()
@@ -67,7 +67,8 @@ class ProjectSerializer(serializers.ModelSerializer):
     class Meta:
         model = Project
         fields = ['id', 'author', 'name', 'image_file',
-                  'description', 'url', 'created_at']
+                  'description', 'url', 'created_at', 'all_ratings', 'avg_ratings']
+
 
 # create registration serializer
 class RegisterSerializer(serializers.ModelSerializer):
@@ -108,6 +109,7 @@ class RegisterSerializer(serializers.ModelSerializer):
         user.save()
 
         return user
+
 
 class RatingSerializer(serializers.ModelSerializer):
     class Meta:
