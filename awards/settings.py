@@ -11,7 +11,9 @@ https://docs.djangoproject.com/en/4.0/ref/settings/
 """
 import os
 from pathlib import Path
-from decouple import config
+from decouple import config, Csv
+import dj_database_url
+import django_heroku
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -20,14 +22,14 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
 
+MODE = config('MODE', default='dev')
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = config('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG =  config('DEBUG', default=False, cast=bool)
 
 ALLOWED_HOSTS = []
-
 
 # Application definition
 
@@ -43,12 +45,15 @@ INSTALLED_APPS = [
     'api',
     # CORS
     'corsheaders',
+    # swagger
+    'rest_framework_swagger',
 ]
 
 MIDDLEWARE = [
     # CORS
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -81,8 +86,12 @@ REST_FRAMEWORK = {
     # Use django's standard  'django.contrib.auth' permissions
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly',
-
     ],
+    
+    # 'DEFAULT_RENDERER_CLASSES': [
+    #     'rest_framework.renderers.JSONRenderer',
+    #     'rest_framework.renderers.BrowsableAPIRenderer',
+    # ],
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 10
 }
@@ -92,19 +101,28 @@ WSGI_APPLICATION = 'awards.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': config('DB_NAME'),
-        'DB_USER': config('DB_USER'),
-        'DB_PASS': config('DB_PASS'),
-        'DB_HOST': config('DB_HOST'),
-        'DB_PORT': ''
+if config('MODE')=="dev":
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql_psycopg2',
+            'NAME': config('DB_NAME'),
+            'DB_USER': config('DB_USER'),
+            'DB_PASS': config('DB_PASS'),
+            'DB_HOST': config('DB_HOST'),
+            'DB_PORT': ''
+        }
     }
-}
+else:
+    DATABASES = {
+       'default': dj_database_url.config(
+           default=config('DATABASE_URL')
+       )
+   }
 
+db_from_env = dj_database_url.config(conn_max_age=500)
+DATABASES['default'].update(db_from_env)
 
+ALLOWED_HOSTS = config('ALLOWED_HOSTS', cast=Csv())
 # Password validation
 # https://docs.djangoproject.com/en/4.0/ref/settings/#auth-password-validators
 
@@ -125,11 +143,35 @@ AUTH_PASSWORD_VALIDATORS = [
 
 
 # !CORS SETTINGS
-CORS_ORIGIN_ALLOW_ALL = False
+CORS_ALLOW_ALL_ORIGINS = True
 CORS_ORIGIN_WHITELIST = (
     'http://localhost:8000',
 )
+CORS_ALLOWED_ORIGINS = [
+    "https://.herokuapp.com",
+    "http://localhost:8000"
+]
 
+CORS_ALLOW_METHODS = [
+'DELETE',
+'GET',
+'OPTIONS',
+'PATCH',
+'POST',
+'PUT',
+]
+
+CORS_ALLOW_HEADERS = [
+'accept',
+'accept-encoding',
+'authorization',
+'content-type',
+'dnt',
+'origin',
+'user-agent',
+'x-csrftoken',
+'x-requested-with',
+]
 # Internationalization
 # https://docs.djangoproject.com/en/4.0/topics/i18n/
 
@@ -144,8 +186,9 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.0/howto/static-files/
-STATIC_ROOT = BASE_DIR / 'staticfiles'
-MEDIA_ROOT = BASE_DIR / 'mediafiles'
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 STATIC_URL = 'static/'
 MEDIA_URL = 'media/'
@@ -158,3 +201,6 @@ STATICFILES_DIRS = (
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# connect django to heroku
+django_heroku.settings(locals())
