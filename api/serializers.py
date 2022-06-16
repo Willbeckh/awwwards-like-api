@@ -45,7 +45,6 @@ class UserSerializer(serializers.ModelSerializer):
         """Gets all user projects"""
 
         projects = Project.objects.filter(author=obj.id)
-        print(projects)
         serializer = ProjectSerializer(projects, many=True)
         return {"all_projects": serializer.data}
 
