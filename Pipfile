@@ -14,6 +14,11 @@ pygments = "*"
 pillow = "*"
 djangorestframework-simplejwt = "*"
 django-cors-headers = "*"
+gunicorn = "*"
+whitenoise = "*"
+dj-database-url = "*"
+django-heroku = "*"
+django-rest-swagger = "*"
 
 [dev-packages]
 
