@@ -26,5 +26,6 @@ class ProfileAdmin(admin.ModelAdmin):
         ('Picture', {'fields': ['profile_pic']}),
         ('Projects', {'fields': ['projects']}),
     ]
-    
+
+
 admin.site.register(Profile, ProfileAdmin)
