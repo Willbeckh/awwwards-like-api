@@ -7,7 +7,7 @@ from cloudinary.models import CloudinaryField
 class Profile(models.Model):
     user = models.OneToOneField(
         User, on_delete=models.CASCADE, related_name='user_profile')
-    profile_pic = CloudinaryField('post image')
+    profile_pic = models.ImageField(upload_to='profile/', blank=True)
     bio = models.TextField('user bio', blank=True)
     projects = models.ManyToManyField(
         'Project', related_name='projects', blank=True)
