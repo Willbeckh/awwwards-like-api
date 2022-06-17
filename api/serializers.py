@@ -63,13 +63,19 @@ class GroupSerializer(serializers.HyperlinkedModelSerializer):
 
 # projects object repr serializer
 class ProjectSerializer(serializers.ModelSerializer):
+    image_url = serializers.SerializerMethodField()
+
     class Meta:
         model = Project
-        fields = ['id', 'author', 'name', 'image_file',
+        fields = ['id', 'author', 'name', 'image_file', 'image_url',
                   'description', 'url', 'created_at', 'all_ratings', 'avg_ratings']
 
+    def get_image_url(self, obj):
+        return obj.image_file.url
 
 # create registration serializer
+
+
 class RegisterSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(
         required=True,
