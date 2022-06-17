@@ -12,12 +12,12 @@ from .views import MyObtainTokenPairView, RegisterView, RatingViewSet
 
 # setting up api routers
 router = routers.DefaultRouter()
-router.register(r'users', views.UserViewSet)
+# router.register(r'users', views.UserViewSet)
 router.register(r'projects', views.ProjectViewSet)
-router.register(r'ratings', views.RatingViewSet)
+# router.register(r'ratings', views.RatingViewSet)
 
 urlpatterns = [
-    path('', include(router.urls)),
+    path('api/', include(router.urls)),
     path('api-auth/', include('rest_framework.urls')),
     path('login/', MyObtainTokenPairView.as_view(), name='token_obtain_pair'),
     path('login/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
