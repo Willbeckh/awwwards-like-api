@@ -17,6 +17,7 @@ import django_heroku
 import cloudinary
 import cloudinary.uploader
 import cloudinary.api
+from datetime import timedelta
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -52,12 +53,15 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     # third party apps
+    'rest_framework_simplejwt',
     'rest_framework',
     'api',
     # CORS
     'corsheaders',
     # swagger
     'rest_framework_swagger',
+    # cloudinary
+    'cloudinary'
 ]
 
 MIDDLEWARE = [
@@ -97,15 +101,27 @@ REST_FRAMEWORK = {
     # Use django's standard  'django.contrib.auth' permissions
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly',
-    ],
+        'rest_framework.permissions.IsAuthenticatedOrReadOnly',
 
-    # 'DEFAULT_RENDERER_CLASSES': [
-    #     'rest_framework.renderers.JSONRenderer',
-    #     'rest_framework.renderers.BrowsableAPIRenderer',
-    # ],
+    ],
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.BasicAuthentication',
+    ),
+
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 10
 }
+
+
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=15),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
+    'AUTH_HEADER_TYPES': ('Bearer',), 
+}
+
+
 
 WSGI_APPLICATION = 'awards.wsgi.application'
 
@@ -152,23 +168,9 @@ AUTH_PASSWORD_VALIDATORS = [
 
 
 # !CORS SETTINGS
-CORS_ALLOW_ALL_ORIGINS = True
-CORS_ORIGIN_WHITELIST = (
-    'http://localhost:8000',
-)
-CORS_ALLOWED_ORIGINS = [
-    "https://.herokuapp.com",
-    "http://localhost:8000"
-]
+CORS_ORIGIN_ALLOW_ALL = True
+CORS_ALLOW_CREDENTIALS = True
 
-CORS_ALLOW_METHODS = [
-    'DELETE',
-    'GET',
-    'OPTIONS',
-    'PATCH',
-    'POST',
-    'PUT',
-]
 
 CORS_ALLOW_HEADERS = [
     'accept',
