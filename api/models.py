@@ -32,7 +32,7 @@ class Project(models.Model):
     description = models.TextField('project description')
     url = models.URLField(max_length=200, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
-    author = models.ForeignKey(User, on_delete=models.CASCADE)
+    author = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
 
     # model data display representation
     def __str__(self):
