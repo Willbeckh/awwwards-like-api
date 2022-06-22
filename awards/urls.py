@@ -21,8 +21,9 @@ from django.views.generic import TemplateView
 
 
 urlpatterns = [
+    path('', include('awards_app.urls')),
     path('admin/', admin.site.urls),
-    path('', include('api.urls')),
+    path('api/', include('api.urls')),
     path('swagger-ui/', TemplateView.as_view(template_name='swagger-ui.html',
          extra_context={'schema_url': 'openapi-schema'}), name='schema-ui'),
 
