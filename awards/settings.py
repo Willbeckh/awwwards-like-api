@@ -61,7 +61,8 @@ INSTALLED_APPS = [
     # swagger
     'rest_framework_swagger',
     # cloudinary
-    'cloudinary'
+    'cloudinary',
+    'bootstrap4'
 ]
 
 MIDDLEWARE = [
