@@ -23,6 +23,7 @@ cloudinary = "*"
 drf-extra-fields = "*"
 django-bootstrap4 = "*"
 fontawesomefree = "*"
+django-material = "*"
 
 [dev-packages]
 
