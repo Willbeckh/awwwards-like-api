@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+<!--  -->
+{% block content %}
+<!--  -->
+<div class="row justify-content-center mt-4">
+  <!-- trending site -->
+  <div class="col-12 col-lg-12 bg-warning p-4 shadow-sm">
+    {% if trend %}
+    <small><b> Site of the day:</b></small>
+    <h2 class="text-center">Trending site comes here</h2>
+    <p>{{trend}}</p>
+    {% else %}
+    <p>Welcome to awards</p>
+    {% endif %}
+  </div>
+  <!-- trending site end -->
+
+  {% for project in projects %}
+  <div class="col-12 col-lg-6 col-md-8 col-sm-12 mt-3">
+    <div class="card mb-3">
+      <div class="card-header">
+        <a href="{% url 'project' project.id %}">
+          <h3 class="text-center">{{project.name}}</h3>
+        </a>
+      </div>
+      <img src="{{project.image_file.url}}" alt="" />
+      <div class="card-body">
+        <p>{{project.description}}</p>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% endblock %}
