@@ -1,3 +1,7 @@
+from api.models import Project, Rating
+from api.serializers import *
+
+# django imports
 from rest_framework.parsers import JSONParser, MultiPartParser, FileUploadParser
 from rest_framework import viewsets, permissions, filters, generics, status
 from rest_framework_simplejwt.views import TokenObtainPairView
@@ -7,15 +11,11 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from django.http import HttpResponse
-from django.shortcuts import render, get_object_or_404
-from django.views import View
-
-# local imports
-from api.serializers import *
-from api.models import Project, Profile, Rating
 
 
 class MyObtainTokenPairView(TokenObtainPairView):
+    """this view creates an endpoint to obtaint the auth jwt token"""
+
     permission_classes = (AllowAny, )
     serializer_class = MyTokenObtainSerializer
 
@@ -31,6 +31,8 @@ class UserViewSet(viewsets.ModelViewSet):
 
 # register view
 class RegisterView(generics.CreateAPIView):
+    """This viewset renders the serialized register form"""
+
     queryset = User.objects.all()
     permission_classes = (AllowAny,)
     serializer_class = RegisterSerializer
@@ -60,6 +62,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
         HttpResponse(status=status.HTTP_404_NOT_FOUND)
 
     # rating system for projectss
+    # this action decorator creates a virtual method that is turneed to a route
     @action(detail=True, methods=['POST'])
     def rate_project(self, request, pk=None):
         if 'stars' in request.data:
@@ -95,44 +98,3 @@ class ProjectViewSet(viewsets.ModelViewSet):
 class RatingViewSet(viewsets.ModelViewSet):
     queryset = Rating.objects.all()
     serializer_class = RatingSerializer
-
-
-# django app views
-class HomeView(View):
-    def get(self, request):
-        trending = Project.objects.all()
-        for site in trending:
-            # get site with average rating > 6 == trending site
-            trending_site = site.avg_ratings()
-            if trending_site > 6:
-                return trending_site
-
-        projects = Project.objects.all().order_by('-created_at')[:12]
-        ctx = {
-            'trend': trending_site,
-            'projects': projects
-        }
-        return render(request, 'awards/index.html', ctx)
-
-
-# todo: register view
-class UserRegisterView(View):
-    """this class renders the registration form and executes the logic for registering a user"""
-    pass
-
-
-# todo: login view
-class UserLoginView(View):
-    pass
-
-
-# ! rating view also is view post by id
-class ProjectView(View):
-    """this class renders a single project by its id and executes the rate functionality"""
-
-    def get(self, request, id):
-        project = get_object_or_404(Project, id=id)
-        context = {
-            'project': project
-        }
-        return render(request, 'awards/project.html', context)
