@@ -5,7 +5,7 @@ from rest_framework_swagger.views import get_swagger_view
 
 # local app imports
 from . import views
-from .views import MyObtainTokenPairView, RegisterView, RatingViewSet, HomeView
+from .views import MyObtainTokenPairView, RegisterView, RatingViewSet, HomeView, ProjectView
 
 
 # schema_view = get_swagger_view(title='Awards API')
@@ -24,5 +24,6 @@ urlpatterns = [
     path('register/', RegisterView.as_view(), name='register'),
     
     # app endpoints
-    path('', HomeView.as_view(), name='home')
+    path('', HomeView.as_view(), name='home'),
+    path('project/<int:id>', ProjectView.as_view(), name='project')
 ]
