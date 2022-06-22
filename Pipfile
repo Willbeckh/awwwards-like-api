@@ -20,6 +20,8 @@ dj-database-url = "*"
 django-heroku = "*"
 django-rest-swagger = "*"
 cloudinary = "*"
+drf-extra-fields = "*"
+django-bootstrap4 = "*"
 
 [dev-packages]
 
