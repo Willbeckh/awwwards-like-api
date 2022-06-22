@@ -1,12 +1,37 @@
+import base64
+from re import I
+import string
 from rest_framework.response import Response
 from rest_framework import serializers, generics
 from django.contrib.auth.models import User, Group
 from rest_framework.validators import UniqueValidator
 from django.contrib.auth.password_validation import validate_password
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+from drf_extra_fields.fields import Base64ImageField, HybridImageField
+from django.core.files.base import ContentFile
 
 # local imports
 from api.models import Project, Profile, Rating
+
+
+# !Image base64 serializer
+class Base64ImageField(serializers.ImageField):
+    """A drf field for serializing image-uploads through post raw-data.
+    """
+
+    def from_native(self, data):
+        """
+        Decode the base64-encoded data and return the decoded data.
+        """
+        # if isinstance
+        if isinstance(data, str) and data.startswith('data:image'):
+            # base64 encoded image data == decode
+            format, imgstr = data.split(';base64,')
+            ext = format.split('/')[-1]
+
+            data = ContentFile(base64.b64decode(imgstr), name='temp.' + ext)
+
+        return super(Base64ImageField, self).from_native(data)
 
 
 # token serializer
@@ -64,18 +89,18 @@ class GroupSerializer(serializers.HyperlinkedModelSerializer):
 # projects object repr serializer
 class ProjectSerializer(serializers.ModelSerializer):
     image_url = serializers.SerializerMethodField()
+    image_file = Base64ImageField()
 
     class Meta:
         model = Project
-        fields = ['id', 'author', 'name', 'image_file', 'image_url',
-                  'description', 'url', 'created_at', 'all_ratings', 'avg_ratings']
+        fields = ['id', 'author', 'name',
+                  'description', 'url', 'image_file', 'image_url', 'created_at', 'all_ratings', 'avg_ratings']
 
     def get_image_url(self, obj):
         return obj.image_file.url
 
+
 # create registration serializer
-
-
 class RegisterSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(
         required=True,
