@@ -22,6 +22,7 @@ django-rest-swagger = "*"
 cloudinary = "*"
 drf-extra-fields = "*"
 django-bootstrap4 = "*"
+fontawesomefree = "*"
 
 [dev-packages]
 
