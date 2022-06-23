@@ -2,6 +2,9 @@
 REST API created with django-rest-framework, 
 This api lets users to create projects and add images for them to be rated/reviewed.
 
+- **API** link:: https://looku-awards.herokuapp.com/api/
+- **CLIENT** link:: https://looku-awards.herokuapp.com/
+
 ## Tech stack
 - Django 4.0.4
 - Django-rest-framework
