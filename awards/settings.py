@@ -65,7 +65,8 @@ INSTALLED_APPS = [
     'cloudinary',
     'bootstrap4',
     'fontawesomefree',
-    'material'
+    'material',
+    'star_ratings'
 ]
 
 MIDDLEWARE = [

@@ -1,8 +1,7 @@
 from django.contrib import admin
-from django.contrib.auth.models import User
 
 # local app imports
-from api.models import Project, Profile
+from api.models import Project
 
 
 # Register your models here.
@@ -19,13 +18,3 @@ class ProjectAdmin(admin.ModelAdmin):
 admin.site.register(Project, ProjectAdmin)
 
 
-class ProfileAdmin(admin.ModelAdmin):
-    fieldsets = [
-        (None, {'fields': ['user']}),
-        ('bio', {'fields': ['bio']}),
-        ('Picture', {'fields': ['profile_pic']}),
-        ('Projects', {'fields': ['projects']}),
-    ]
-
-
-admin.site.register(Profile, ProfileAdmin)

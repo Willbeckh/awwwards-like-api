@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+{% extends 'base.html' %} {% load ratings %}
 
 <!--  -->
 {% block content %}
@@ -7,8 +7,9 @@
   <div class="col-10">
     <h1>{{project.name}}</h1>
     <div class="card-img w-25">
-        <img src="{{project.image_file.url}}" alt="" width="100rem">
+      <img src="{{project.image_file.url}}" alt="" width="100rem" />
     </div>
+    {% ratings project %}
   </div>
 </div>
 {% endblock %}

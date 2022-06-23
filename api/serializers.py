@@ -11,27 +11,27 @@ from drf_extra_fields.fields import Base64ImageField, HybridImageField
 from django.core.files.base import ContentFile
 
 # local imports
-from api.models import Project, Profile, Rating
+from api.models import Project, Rating
 
 
-# !Image base64 serializer
-class Base64ImageField(serializers.ImageField):
-    """A drf field for serializing image-uploads through post raw-data.
-    """
+# !Image base64 serializer: deprecated causing too much data overlay
+# class Base64ImageField(serializers.ImageField):
+#     """A drf field for serializing image-uploads through post raw-data.
+#     """
 
-    def from_native(self, data):
-        """
-        Decode the base64-encoded data and return the decoded data.
-        """
-        # if isinstance
-        if isinstance(data, str) and data.startswith('data:image'):
-            # base64 encoded image data == decode
-            format, imgstr = data.split(';base64,')
-            ext = format.split('/')[-1]
+#     def from_native(self, data):
+#         """
+#         Decode the base64-encoded data and return the decoded data.
+#         """
+#         # if isinstance
+#         if isinstance(data, str) and data.startswith('data:image'):
+#             # base64 encoded image data == decode
+#             format, imgstr = data.split(';base64,')
+#             ext = format.split('/')[-1]
 
-            data = ContentFile(base64.b64decode(imgstr), name='temp.' + ext)
+#             data = ContentFile(base64.b64decode(imgstr), name='temp.' + ext)
 
-        return super(Base64ImageField, self).from_native(data)
+#         return super(Base64ImageField, self).from_native(data)
 
 
 # token serializer
@@ -45,13 +45,6 @@ class MyTokenObtainSerializer(TokenObtainPairSerializer):
         return token
 
 
-class ProfileSerializer(serializers.ModelSerializer):
-    """jsonify user profile data"""
-    class Meta:
-        model = Profile
-        fields = ['profile_pic', 'bio']
-
-
 class UserSerializer(serializers.ModelSerializer):
     all_projects = serializers.SerializerMethodField()
     projects = serializers.SerializerMethodField()
@@ -59,7 +52,7 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ['id', 'username', 'email', 'bio',
+        fields = ['id', 'username', 'email',
                   'url', 'projects', 'all_projects']
 
     def get_projects(self, obj):
@@ -73,12 +66,6 @@ class UserSerializer(serializers.ModelSerializer):
         serializer = ProjectSerializer(projects, many=True)
         return {"all_projects": serializer.data}
 
-    def get_bio(self, obj):
-        """get the user bio from profile model"""
-        bio = Profile.objects.filter(user=obj.id)
-        serializer = ProfileSerializer(bio)
-        return serializer.data
-
 
 class GroupSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
@@ -89,7 +76,7 @@ class GroupSerializer(serializers.HyperlinkedModelSerializer):
 # projects object repr serializer
 class ProjectSerializer(serializers.ModelSerializer):
     image_url = serializers.SerializerMethodField()
-    image_file = Base64ImageField()
+    # image_file = Base64ImageField()
 
     class Meta:
         model = Project

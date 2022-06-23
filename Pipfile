@@ -24,6 +24,7 @@ drf-extra-fields = "*"
 django-bootstrap4 = "*"
 fontawesomefree = "*"
 django-material = "*"
+django-star-ratings = "*"
 
 [dev-packages]
 

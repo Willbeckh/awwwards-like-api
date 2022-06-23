@@ -1,0 +1,16 @@
+* {
+  padding: 0;
+  margin: 0;
+}
+
+/* homepage */
+.project-body {
+  position: absolute;
+}
+
+.project-body:hover {
+  display: block;
+  background-color: rgba(0,0,0,0.5);
+  
+}
+/* homepage end */

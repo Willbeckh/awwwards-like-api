@@ -20,13 +20,16 @@
   <div class="col-12 col-lg-6 col-md-8 col-sm-12 mt-3">
     <div class="card mb-3">
       <div class="card-header">
-        <a href="{% url 'project' project.id %}">
+        <a href="{% url 'awards:project' project.id %}">
           <h3 class="text-center">{{project.name}}</h3>
         </a>
       </div>
-      <img src="{{project.image_file.url}}" alt="" />
-      <div class="card-body">
-        <p>{{project.description}}</p>
+
+      <div class="project-card position-relative">
+        <img src="{{project.image_file.url}}" alt="" class="card-img-top" />
+        <div class="project-body d-none">
+          <p class="none">{{project.description}}</p>
+        </div>
       </div>
     </div>
   </div>

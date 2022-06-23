@@ -18,12 +18,7 @@
     <div class="register-form p-4 rounded shadow-sm">
       {% load static %}
       <div class="text-center">
-        <img
-          src="{% static 'media/sign.png' %}"
-          alt=""
-          class="sign-img mb-1"
-          height="200px"
-        />
+        <img src="" alt="" class="sign-img mb-1" height="200px" />
       </div>
       <form action="" method="POST">
         {% csrf_token %}
@@ -54,7 +49,8 @@
         </div>
         {{ form.errors }}
         <p class="text-muted">
-          Arleady have an account? <a href="{% url 'awards:login' %}">Sign In</a>
+          Arleady have an account?
+          <a href="{% url 'awards:login' %}">Sign In</a>
         </p>
       </form>
     </div>
